@@ -51,10 +51,12 @@ int main(int argc, char* argv[])
     for(int h = 0; h < height; h++){
         for(int w = 0; w < width; w++){
             int col = ((w & 0x08) == 0) ^ ((h & 0x08) == 0);
+            cout << col << " " << (col & 0x00) << " " << (col & 0x10) << " " << endl;
             raster[h][w].r = static_cast<float>(col);
             raster[h][w].g = static_cast<float>(col & 0x00);
             raster[h][w].b = static_cast<float>(col & 0x11);
         }
+        cout << endl;
     }
 
     ofstream ppmFile;
@@ -67,9 +69,9 @@ int main(int argc, char* argv[])
 		cout << "File created/opened successfully!" << endl;
 		ppmFile << "P3" << endl << width << " " << height << endl << "255" << endl;
 		
-        for(int r = 0; r < height; r++){
+        for(int r = height-1; r >= 0; r--){
             for(int c = 0; c < width; c++){
-                ppmFile << tf*raster[r][c].r << " " << tf*raster[r][c].g << " " << tf*raster[r][c].b << " ";
+                ppmFile << (tf * raster[r][c].r) << " " << (tf * raster[r][c].g) << " " << (tf * raster[r][c].b) << " ";
             }
             ppmFile << endl;
         }
@@ -77,6 +79,7 @@ int main(int argc, char* argv[])
         
         
         ppmFile.close();
+        cout << "File closed." << endl;
 	}
 
 
@@ -84,6 +87,8 @@ int main(int argc, char* argv[])
     for(int i=0;i<height;i++)    //delete inner arrays
       delete [] raster[i]; 
     delete [] raster;
+
+    cout << "Memory cleaned up.";
     return 0;
 }
 
