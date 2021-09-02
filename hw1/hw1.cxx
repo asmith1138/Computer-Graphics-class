@@ -21,7 +21,7 @@
  * one 1 in it.  Such as 0x04 for checkerboard spaces half the size or   *
  * 0x10 for twice the size, other options(0x02,0x20,0x40,etc.).          *
  * 
- * Second, the static casts to float of col.  At this point col is       *
+ * Second, the static casts of col to float.  At this point col is       *
  * either 1 or 0.  A bitwise AND will compare 0x00 or 0x11 to 1 or 0,    *
  * this comes to 00001 & 00000 or 00001 & 10001. This means the 1 value  *
  * always returns 1 for both r(since no operation is done) and b(since   *
@@ -46,6 +46,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include<string.h>
 using namespace std;
 
 struct RGB {
@@ -60,12 +61,15 @@ int main(int argc, char* argv[])
         cout << "Please use the format: 'program <width> <height> <output filename>' to run this program" << endl;
     }
 
+    bool debug = false;
+    if(argc == 5){
+        string d = "--debug";
+        debug = strcmp(argv[4], d.c_str()) == 0;
+    }
+
     char* filename = argv[3];
     int width = atoi(argv[1]);
     int height = atoi(argv[2]);
-
-    cout << width << endl;
-    cout << height << endl;
 
     //initialization
     RGB** raster = new RGB*[height];
@@ -76,12 +80,16 @@ int main(int argc, char* argv[])
     for(int h = 0; h < height; h++){
         for(int w = 0; w < width; w++){
             int col = ((w & 0x08) == 0) ^ ((h & 0x08) == 0);
-            cout << col << " " << (col & 0x00) << " " << (col & 0x10) << " " << endl;
+            if(debug){
+                cout << col << " " << (col & 0x00) << " " << (col & 0x10) << " ";
+            }
             raster[h][w].r = static_cast<float>(col);
             raster[h][w].g = static_cast<float>(col & 0x00);
             raster[h][w].b = static_cast<float>(col & 0x11);
         }
-        cout << endl;
+        if(debug){
+            cout << endl;
+        }
     }
 
     ofstream ppmFile;
@@ -91,20 +99,26 @@ int main(int argc, char* argv[])
     if(!ppmFile){
         cout << "File creation failed, please try again." << endl;
     }else {
-		cout << "File created/opened successfully!" << endl;
+        if(debug){
+		    cout << "File created/opened successfully!" << endl;
+        }
 		ppmFile << "P3" << endl << width << " " << height << endl << "255" << endl;
-		
+		//We output the raster to the file from top to bottom and left to right
+        //So we start the rows at the top and the columns as normal
         for(int r = height-1; r >= 0; r--){
             for(int c = 0; c < width; c++){
                 ppmFile << (tf * raster[r][c].r) << " " << (tf * raster[r][c].g) << " " << (tf * raster[r][c].b) << " ";
             }
             ppmFile << endl;
         }
-        cout << "File written successfully!" << endl;
-        
+        if(debug){
+            cout << "File written successfully!" << endl;
+        }
         
         ppmFile.close();
-        cout << "File closed." << endl;
+        if(debug){
+            cout << "File closed." << endl;
+        }
 	}
 
 
@@ -113,7 +127,9 @@ int main(int argc, char* argv[])
       delete [] raster[i]; 
     delete [] raster;
 
-    cout << "Memory cleaned up.";
+    if(debug){
+        cout << "Memory cleaned up.";
+    }
     return 0;
 }
 
