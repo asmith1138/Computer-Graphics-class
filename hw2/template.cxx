@@ -2,10 +2,10 @@
  *  CMPSC 457 Section 001                                            *
  *  Homework 1                                                       *
  *                                                                   *
- *  YOUR NAME                                                        *
- *  YOUR ACCESS ID                                                   *
+ *  Andrew Smith                                                     *
+ *  azs7014                                                          *
  *                                                                   *
- *  DATE OF SUBMISSION                                               *
+ *  9/30/2021                                                        *
  *********************************************************************/  
 
 
@@ -304,7 +304,8 @@ void keyboard_input()
     }
 }
   
-
+  //Enum for slope
+enum SLOPE { ZERO, ONE, ZEROTOONE, OVERONE, UNDERNEGONE, NEGONETOZERO, NEGONE, INF };
 
 // a helper function to draw a line
 // you need to modify this function for midpoint algorithm
@@ -338,37 +339,165 @@ void midpoint_line()
     //          at top left in glut.
     //       You must compensate the difference between the coordinate
     //       systems used by GL and glut, when drawing.
-    int y0=win_h - points[0].y;
-    int y1=win_h - points[1].y;
-    int x0=points[0].x;
-    int x1=points[1].x;
-    if(x0>x1){
-        int xt = x0;
-        x0=x1;
-        x1=xt;
-        int yt = y0;
-        y0=y1;
-        y1=yt;
+    SLOPE slopeOfLine;
+    //set points and swap if needed
+    int y0 = win_h - points[0].y;
+    int y1 = win_h - points[1].y;
+    int x0 = points[0].x;
+    int x1 = points[1].x;
+    if (x0 > x1)
+    {
+        int swap = x0;
+        x0 = x1;
+        x1 = swap;
+        swap = y0;
+        y0 = y1;
+        y1 = swap;
     }
-    int dy=2*(y0-y1);
-    int dx=2*(x1-x0);
-    cout<<"DX: "<<dx<<endl;
-    cout<<"DY: "<<dy<<endl;
-    int d=((2*(y0-y1)*(x0+1))+((x1-x0)*((2*y0)+1))+(2*x0*y1)-(2*x1*y0));
-    cout<<"D: "<<d<<endl;
-    int y=y0;
-    glBegin(GL_POINTS);
-        for(int x=x0;x<=x1;x++){
-            glVertex2d(x, y);
-            if(d<0){
-                d+=dy+dx;
-                y++;
-            }else{
-                d+=dy;
-            }
-            cout<<"D: "<<d<<endl;
+
+    //slope stuff
+    int ydiff = y1 - y0;
+    int xdiff = x1 - x0;
+    if (ydiff < xdiff && y1 > y0)
+    {
+        //0<m<1
+        slopeOfLine = ZEROTOONE;
+    }
+    else if (ydiff > xdiff && y1 > y0)
+    {
+        //m>1
+        slopeOfLine = OVERONE;
+        int swap = x0;
+        x0 = y0;
+        y0 = swap;
+        swap = x1;
+        x1 = y1;
+        y1 = swap;
+        if (x0 > x1)
+        {
+            swap = x0;
+            x0 = x1;
+            x1 = swap;
+            swap = y0;
+            y0 = y1;
+            y1 = swap;
         }
-        //glVertex2d(x, y);
+    }
+    else if (ydiff > xdiff && y1 < y0)
+    {
+        //m<-1
+        slopeOfLine = UNDERNEGONE;
+        x0 = (-1 * x0);
+        x1 = (-1 * x1);
+        int swap = x0;
+        x0 = y0;
+        y0 = swap;
+        swap = x1;
+        x1 = y1;
+        y1 = swap;
+        if (x0 > x1)
+        {
+            swap = x0;
+            x0 = x1;
+            x1 = swap;
+            swap = y0;
+            y0 = y1;
+            y1 = swap;
+        }
+    }
+    else if (ydiff < xdiff && y1 < y0)
+    {
+        //-1<m<0
+        slopeOfLine = NEGONETOZERO;
+        y0 = (-1 * y0);
+        y1 = (-1 * y1);
+    }
+    else if (y1 == y0)
+    {
+        //m=0
+        slopeOfLine = ZERO;
+    }
+    else if (ydiff == xdiff)
+    {
+        //m=1
+        slopeOfLine = ONE;
+    }
+    else if (x1 == x0)
+    {
+        //m=infinity striaght up
+        slopeOfLine = INF;
+    }
+    else if (ydiff == (-1 * xdiff))
+    {
+        //m= -1
+        slopeOfLine = NEGONE;
+    }
+
+    //setup line vars
+    int dy = 2 * (y0 - y1);
+    int dx = 2 * (x1 - x0);
+    cout << "DX: " << dx << endl;
+    cout << "DY: " << dy << endl;
+    int d = ((2 * (y0 - y1) * (x0 + 1)) + ((x1 - x0) * ((2 * y0) + 1)) + (2 * x0 * y1) - (2 * x1 * y0));
+    cout << "D: " << d << endl;
+    int y = y0;
+
+    glBegin(GL_POINTS);
+    for (int x = x0; x <= x1; x++)
+    {
+        if (slopeOfLine == ZERO)
+        {
+            glVertex2d(x, y);
+            continue;
+        }
+        else if (slopeOfLine == ONE)
+        {
+            glVertex2d(x, y);
+            y++;
+            continue;
+        }
+        else if (slopeOfLine == ZEROTOONE)
+        {
+            glVertex2d(x, y);
+        }
+        else if (slopeOfLine == OVERONE)
+        {
+            glVertex2d(y, x);
+        }
+        else if (slopeOfLine == UNDERNEGONE)
+        {
+            glVertex2d((-1 * y), x);
+        }
+        else if (slopeOfLine == NEGONETOZERO)
+        {
+            glVertex2d(x, (-1 * y));
+        }
+        else if (slopeOfLine == NEGONE)
+        {
+            glVertex2d((-1 * x), y);
+            y++;
+            continue;
+        }
+        else if (slopeOfLine == INF)
+        {
+            for (int yprime = y0; yprime <= y1; y++)
+            {
+                glVertex2d(x, yprime);
+            }
+        }
+
+        if (d < 0)
+        {
+            d += dy + dx;
+            y++;
+        }
+        else
+        {
+            d += dy;
+        }
+        cout << "D: " << d << endl;
+    }
+    //glVertex2d(x, y);
     glEnd();
     //glBegin(GL_LINES);
     //glVertex2d(points[0].x, win_h - points[0].y);
@@ -376,3 +505,63 @@ void midpoint_line()
     //glEnd();
 }
       
+// a helper function to draw a circle
+// anything you draw here goes to back buffer
+void midpoint_circle()
+{
+    // select a line color of your choice
+    glColor3f(1.0, 0.0, 0.0);
+
+    SLOPE slopeOfLine;
+    //set points and swap if needed
+    int y0 = win_h - points[0].y;
+    int y1 = win_h - points[1].y;
+    int x0 = points[0].x;
+    int x1 = points[1].x;
+
+    //slope stuff
+    int ydiff = y1 - y0;
+    int xdiff = x1 - x0;
+
+    //setup line vars
+    //WHAT ARE DY AND DX???
+    int dy = 2 * (y0 - y1);
+    int dx = 2 * (x1 - x0);
+    int R = 0;//???
+    cout << "DX: " << dx << endl;
+    cout << "DY: " << dy << endl;
+    //WHAT IS D Initial???
+    int d = ((2 * (y0 - y1) * (x0 + 1)) + ((x1 - x0) * ((2 * y0) + 1)) + (2 * x0 * y1) - (2 * x1 * y0));
+    cout << "D: " << d << endl;
+    int y = y0+R;
+
+    glBegin(GL_POINTS);//start at x0 WHERE TO END???
+    for (int x = x0; x <= x1; x++)
+    {
+        glVertex2d(x, y);
+        glVertex2d(x, (-1 * y));
+        glVertex2d((-1 * x), y);
+        glVertex2d((-1 * x), (-1 * y));
+        glVertex2d(y, x);
+        glVertex2d((-1 * y), x);
+        glVertex2d(y, (-1 * x));
+        glVertex2d((-1 * y), (-1 * x));
+
+        if (d < 0)
+        {
+            d += dy + dx;
+            y++;
+        }
+        else
+        {
+            d += dy;
+        }
+        cout << "D: " << d << endl;
+    }
+    //glVertex2d(x, y);
+    glEnd();
+    //glBegin(GL_LINES);
+    //glVertex2d(points[0].x, win_h - points[0].y);
+    //glVertex2d(points[1].x, win_h - points[1].y);
+    //glEnd();
+}
