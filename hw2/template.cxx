@@ -514,29 +514,35 @@ void midpoint_circle()
 
     SLOPE slopeOfLine;
     //set points and swap if needed
-    int y0 = win_h - points[0].y;
+    int yc = win_h - points[0].y;
     int y1 = win_h - points[1].y;
-    int x0 = points[0].x;
+    int xc = points[0].x;
     int x1 = points[1].x;
 
     //slope stuff
-    int ydiff = y1 - y0;
-    int xdiff = x1 - x0;
+    int ydiff = y1 - yc;
+    int xdiff = x1 - xc;
 
     //setup line vars
-    //WHAT ARE DY AND DX???
-    int dy = 2 * (y0 - y1);
-    int dx = 2 * (x1 - x0);
-    int R = 0;//???
+    
+
+    
+    double R = sqrt(((x1 - xc) ^ 2) + ((y1 - yc) ^ 2)); //???
+    int R2 = ((x1 - xc) ^ 2) + ((y1 - yc) ^ 2);
+    int y = yc+R;
     cout << "DX: " << dx << endl;
     cout << "DY: " << dy << endl;
     //WHAT IS D Initial???
-    int d = ((2 * (y0 - y1) * (x0 + 1)) + ((x1 - x0) * ((2 * y0) + 1)) + (2 * x0 * y1) - (2 * x1 * y0));
+    int d = (16) + (16 * y * y) + (16 * yc * yc) - (32 * y * yc) - (16 * y) + (16 * yc) + 4 + (16 * R2);
+    //WHAT ARE DY AND DX???
+    int dy = (32 * yc) - (32 * y) + 53;
+    int dx = 48;
+    //((2 * (yc - y1) * (xc + 1)) + ((x1 - xc) * ((2 * yc) + 1)) + (2 * xc * y1) - (2 * x1 * yc));
     cout << "D: " << d << endl;
-    int y = y0+R;
+    
 
     glBegin(GL_POINTS);//start at x0 WHERE TO END???
-    for (int x = x0; x <= x1; x++)
+    for (int x = xc; x <= x1; x++)
     {
         glVertex2d(x, y);
         glVertex2d(x, (-1 * y));
