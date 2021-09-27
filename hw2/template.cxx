@@ -47,6 +47,7 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <iostream>
+#include <math.h>
 
 
 using std::cin;
@@ -67,6 +68,7 @@ void init();
 void addPoint(int x, int y);
 void keyboard_input();
 void midpoint_line();
+void midpoint_circle();
 
 
 
@@ -192,7 +194,7 @@ void display()
 	midpoint_line();
 	break;
     case CIRCLE:
-	//midpoint_circle();
+	midpoint_circle();
 	break;
     default:
 	break;
@@ -234,54 +236,57 @@ void mouse(int button, int state, int x, int y)
 // called when a keyboard event (key typed) occurs
 void keyboard(unsigned char key, int x, int y)
 {
-    switch (key) {
-    case 'q':  // quit the program
-	exit(0);
-    case 'l':  // draw a line
-	drawing_mode = LINE;
-	num_points = 0;
-	break;
-    case 'c':  // draw a circle; not implemented
+    switch (key)
+    {
+    case 'q': // quit the program
+        exit(0);
+    case 'l': // draw a line
+        drawing_mode = LINE;
+        num_points = 0;
+        break;
+    case 'c': // draw a circle; not implemented
         drawing_mode = CIRCLE;
-	break;
-    case 'k':  // for grading purpose only--do not modify
-	keyboard_input();
-	num_points = 0;
-	break;
+        num_points = 0;
+        break;
+    case 'k': // for grading purpose only--do not modify
+        keyboard_input();
+        num_points = 0;
+        break;
     default:
-	drawing_mode = NONE;
-	break;
+        drawing_mode = NONE;
+        break;
     }
 }
-
 
 // add the point just selected by mouse button
 void addPoint(int x, int y)
 {
-    switch (drawing_mode) {
-    case LINE:  // save the points until we have 2 points
-	points[num_points++] = Point(x, y);
-	if (num_points == 2) {
-	    // we have 2 points now, so we can draw a line
-	    
-	    // reset the num_points to 0 for next line
-	    num_points = 0;
+    switch (drawing_mode)
+    {
+    case CIRCLE:
+    case LINE: // save the points until we have 2 points
+        points[num_points++] = Point(x, y);
+        if (num_points == 2)
+        {
+            // we have 2 points now, so we can draw a line
 
-	    // tell glut that the current window needs to be redisplayed.
-	    // glut will then redisplay the current window.
-	    // this means display() callback will be called.
-	    // display() in turn will draw a midpoint line on back buffer
-	    //   and swap the back buffer with the front buffer
-	    // by swapping the buffers, the back buffer becomes visible,
-	    //   ie, displayed on the window
-	    glutPostRedisplay();
-	}
-	break;
+            // reset the num_points to 0 for next line
+            num_points = 0;
+
+            // tell glut that the current window needs to be redisplayed.
+            // glut will then redisplay the current window.
+            // this means display() callback will be called.
+            // display() in turn will draw a midpoint line on back buffer
+            //   and swap the back buffer with the front buffer
+            // by swapping the buffers, the back buffer becomes visible,
+            //   ie, displayed on the window
+            glutPostRedisplay();
+        }
+        break;
     default:
-	break;
+        break;
     }
 }
-
 
 // for grading purpose only
 // do not modify this function
@@ -530,19 +535,19 @@ void midpoint_circle()
     double R = sqrt(((x1 - xc) ^ 2) + ((y1 - yc) ^ 2)); //???
     int R2 = ((x1 - xc) ^ 2) + ((y1 - yc) ^ 2);
     int y = yc+R;
-    cout << "DX: " << dx << endl;
-    cout << "DY: " << dy << endl;
     //WHAT IS D Initial???
     int d = (16) + (16 * y * y) + (16 * yc * yc) - (32 * y * yc) - (16 * y) + (16 * yc) + 4 + (16 * R2);
     //WHAT ARE DY AND DX???
     int dy = (32 * yc) - (32 * y) + 53;
     int dx = 48;
+    cout << "DX: " << dx << endl;
+    cout << "DY: " << dy << endl;
     //((2 * (yc - y1) * (xc + 1)) + ((x1 - xc) * ((2 * yc) + 1)) + (2 * xc * y1) - (2 * x1 * yc));
     cout << "D: " << d << endl;
     
 
     glBegin(GL_POINTS);//start at x0 WHERE TO END???
-    for (int x = xc; x <= x1; x++)
+    for (int x = xc; x <= R/2; x++)
     {
         glVertex2d(x, y);
         glVertex2d(x, (-1 * y));
