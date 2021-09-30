@@ -359,18 +359,19 @@ void midpoint_line()
         y0 = y1;
         y1 = swap;
     }
-
     //slope stuff
     int ydiff = y1 - y0;
     int xdiff = x1 - x0;
     if (ydiff < xdiff && y1 > y0)
     {
         //0<m<1
+        cout<<"zero to one"<<endl;
         slopeOfLine = ZEROTOONE;
     }
     else if (ydiff > xdiff && y1 > y0)
     {
         //m>1
+        cout<<"over one"<<endl;
         slopeOfLine = OVERONE;
         int swap = x0;
         x0 = y0;
@@ -388,18 +389,20 @@ void midpoint_line()
             y1 = swap;
         }
     }
-    else if (ydiff > xdiff && y1 < y0)
+    else if (-1*(ydiff) > xdiff && y1 < y0)
     {
         //m<-1
+        cout<<"under neg one"<<endl;
         slopeOfLine = UNDERNEGONE;
-        x0 = (-1 * x0);
-        x1 = (-1 * x1);
+        x0 = (-1*x0);
+        x1 = (-1*x1);
         int swap = x0;
         x0 = y0;
         y0 = swap;
         swap = x1;
         x1 = y1;
         y1 = swap;
+
         if (x0 > x1)
         {
             swap = x0;
@@ -410,9 +413,12 @@ void midpoint_line()
             y1 = swap;
         }
     }
-    else if (ydiff < xdiff && y1 < y0)
+    else if (-1*(ydiff) < xdiff && y1 < y0)
     {
         //-1<m<0
+        cout<<"neg one to zero"<<endl;
+        cout<<"ydiff: "<<ydiff<<endl;
+        cout<<"xdiff: "<<xdiff<<endl;
         slopeOfLine = NEGONETOZERO;
         y0 = (-1 * y0);
         y1 = (-1 * y1);
@@ -420,22 +426,14 @@ void midpoint_line()
     else if (y1 == y0)
     {
         //m=0
+        cout<<"zero"<<endl;
         slopeOfLine = ZERO;
     }
     else if (ydiff == xdiff)
     {
         //m=1
+        cout<<"one"<<endl;
         slopeOfLine = ONE;
-    }
-    else if (x1 == x0)
-    {
-        //m=infinity striaght up
-        slopeOfLine = INF;
-    }
-    else if (ydiff == (-1 * xdiff))
-    {
-        //m= -1
-        slopeOfLine = NEGONE;
     }
 
     //setup line vars
@@ -471,24 +469,12 @@ void midpoint_line()
         }
         else if (slopeOfLine == UNDERNEGONE)
         {
+            //glVertex2d(x, y);
             glVertex2d((-1 * y), x);
         }
         else if (slopeOfLine == NEGONETOZERO)
         {
             glVertex2d(x, (-1 * y));
-        }
-        else if (slopeOfLine == NEGONE)
-        {
-            glVertex2d((-1 * x), y);
-            y++;
-            continue;
-        }
-        else if (slopeOfLine == INF)
-        {
-            for (int yprime = y0; yprime <= y1; y++)
-            {
-                glVertex2d(x, yprime);
-            }
         }
 
         if (d < 0)
@@ -547,7 +533,8 @@ void midpoint_circle()
     
 
     glBegin(GL_POINTS);//start at x0 WHERE TO END???
-    for (int x = xc; x <= R/2; x++)
+    glVertex2d(xc,yc);
+    for (int x = xc; x <= (xc+R/2); x++)
     {
         glVertex2d(x, y);
         glVertex2d(x, (-1 * y));
