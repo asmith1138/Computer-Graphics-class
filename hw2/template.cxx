@@ -511,21 +511,37 @@ void midpoint_circle()
     int x1 = points[1].x;
 
     //slope stuff
-    int ydiff = y1 - yc;
-    int xdiff = x1 - xc;
+    //int ydiff = y1 - yc;
+    //int xdiff = x1 - xc;
 
     //setup line vars
     
 
     
-    double R = sqrt(((x1 - xc) ^ 2) + ((y1 - yc) ^ 2)); //???
-    int R2 = ((x1 - xc) ^ 2) + ((y1 - yc) ^ 2);
-    int y = yc+R;
+    double R = sqrt(((x1 - xc) *(x1 - xc) ) + ((y1 - yc) *(y1 - yc))); //???
+    cout<<"Y1: "<<y1<<endl;
+    cout<<"X1: "<<x1<<endl;
+    cout<<"x1-xc: "<<(x1 - xc)<<endl;
+    cout<<"x1-xc squared: "<<((x1 - xc) ^ 2)<<endl;
+    cout<<"Radius: "<<R<<endl;
+    int R2 = ((x1 - xc) *(x1 - xc)) + ((y1 - yc) *(y1 - yc));
+    cout<<"Radius2: "<<R2<<endl;
+    if(R<0){
+        R=R*-1;
+    }
+    cout<<"New Radius: "<<R<<endl;
+    //int y = yc+R;
+    int y = R;
+    cout<<"y initial: "<<y<<endl;
     //WHAT IS D Initial???
-    int d = (16) + (16 * y * y) + (16 * yc * yc) - (32 * y * yc) - (16 * y) + (16 * yc) + 4 + (16 * R2);
+    //int d = (16) + (16 * y * y) + (16 * yc * yc) - (32 * y * yc) - (16 * y) + (16 * yc) + 4 + (16 * R2);
+    int d = 16+4+(y*y*16)-(16*y)-(16*R2);
     //WHAT ARE DY AND DX???
-    int dy = (32 * yc) - (32 * y) + 53;
+    //int dy = (32 * yc) - (32 * y) + 53;
+    //int dx = 48;
     int dx = 48;
+    //int dy = (-32 * y) + 53;
+    int dy = 0 + 80;
     cout << "DX: " << dx << endl;
     cout << "DY: " << dy << endl;
     //((2 * (yc - y1) * (xc + 1)) + ((x1 - xc) * ((2 * yc) + 1)) + (2 * xc * y1) - (2 * x1 * yc));
@@ -534,26 +550,27 @@ void midpoint_circle()
 
     glBegin(GL_POINTS);//start at x0 WHERE TO END???
     glVertex2d(xc,yc);
-    for (int x = xc; x <= (xc+R/2); x++)
+    for (int x = 0; x <= y; x++)
     {
-        glVertex2d(x, y);
-        glVertex2d(x, (-1 * y));
-        glVertex2d((-1 * x), y);
-        glVertex2d((-1 * x), (-1 * y));
-        glVertex2d(y, x);
-        glVertex2d((-1 * y), x);
-        glVertex2d(y, (-1 * x));
-        glVertex2d((-1 * y), (-1 * x));
+        glVertex2d(x+xc, y+yc);
+        glVertex2d(x+xc, (-1 * y)+yc);
+        glVertex2d((-1 * x)+xc, y+yc);
+        glVertex2d((-1 * x)+xc, (-1 * y)+yc);
+        glVertex2d(y+xc, x+yc);
+        glVertex2d((-1 * y)+xc, x+yc);
+        glVertex2d(y+xc, (-1 * x)+yc);
+        glVertex2d((-1 * y)+xc, (-1 * x)+yc);
 
-        if (d < 0)
+        if (d > 0)
         {
-            d += dy + dx;
-            y++;
+            d += (-32 * y)+(32*x)+dy + dx;
+            y--;
         }
         else
         {
-            d += dy;
+            d += (32*x)+dx;
         }
+        
         cout << "D: " << d << endl;
     }
     //glVertex2d(x, y);
