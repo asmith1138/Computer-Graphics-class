@@ -469,7 +469,6 @@ void midpoint_line()
         }
         else if (slopeOfLine == UNDERNEGONE)
         {
-            //glVertex2d(x, y);
             glVertex2d((-1 * y), x);
         }
         else if (slopeOfLine == NEGONETOZERO)
@@ -488,12 +487,7 @@ void midpoint_line()
         }
         cout << "D: " << d << endl;
     }
-    //glVertex2d(x, y);
     glEnd();
-    //glBegin(GL_LINES);
-    //glVertex2d(points[0].x, win_h - points[0].y);
-    //glVertex2d(points[1].x, win_h - points[1].y);
-    //glEnd();
 }
       
 // a helper function to draw a circle
@@ -502,22 +496,12 @@ void midpoint_circle()
 {
     // select a line color of your choice
     glColor3f(1.0, 0.0, 0.0);
-
-    SLOPE slopeOfLine;
     //set points and swap if needed
     int yc = win_h - points[0].y;
     int y1 = win_h - points[1].y;
     int xc = points[0].x;
     int x1 = points[1].x;
 
-    //slope stuff
-    //int ydiff = y1 - yc;
-    //int xdiff = x1 - xc;
-
-    //setup line vars
-    
-
-    
     double R = sqrt(((x1 - xc) *(x1 - xc) ) + ((y1 - yc) *(y1 - yc))); //???
     cout<<"Y1: "<<y1<<endl;
     cout<<"X1: "<<x1<<endl;
@@ -541,7 +525,7 @@ void midpoint_circle()
     cout << "DY: " << dy << endl;
     cout << "D: " << d << endl;
     
-    glBegin(GL_POINTS);//start at x0 WHERE TO END???
+    glBegin(GL_POINTS);//start at x0 end at y
     glVertex2d(xc,yc);
     for (int x = 0; x <= y; x++)
     {
@@ -566,10 +550,5 @@ void midpoint_circle()
         
         cout << "D: " << d << endl;
     }
-    //glVertex2d(x, y);
     glEnd();
-    //glBegin(GL_LINES);
-    //glVertex2d(points[0].x, win_h - points[0].y);
-    //glVertex2d(points[1].x, win_h - points[1].y);
-    //glEnd();
 }
