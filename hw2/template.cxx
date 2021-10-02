@@ -526,28 +526,21 @@ void midpoint_circle()
     cout<<"Radius: "<<R<<endl;
     int R2 = ((x1 - xc) *(x1 - xc)) + ((y1 - yc) *(y1 - yc));
     cout<<"Radius2: "<<R2<<endl;
-    if(R<0){
-        R=R*-1;
+    if(R < 0){
+        R = R * -1;
     }
     cout<<"New Radius: "<<R<<endl;
-    //int y = yc+R;
     int y = R;
     cout<<"y initial: "<<y<<endl;
-    //WHAT IS D Initial???
-    //int d = (16) + (16 * y * y) + (16 * yc * yc) - (32 * y * yc) - (16 * y) + (16 * yc) + 4 + (16 * R2);
-    int d = 16+4+(y*y*16)-(16*y)-(16*R2);
-    //WHAT ARE DY AND DX???
-    //int dy = (32 * yc) - (32 * y) + 53;
-    //int dx = 48;
-    int dx = 48;
-    //int dy = (-32 * y) + 53;
-    int dy = 0 + 80;
+    //D
+    int d = 4+1+(y*y*4)-(4*y)-(4*R2);
+    //DY and DX initially
+    int dx = 12;
+    int dy = 20;
     cout << "DX: " << dx << endl;
     cout << "DY: " << dy << endl;
-    //((2 * (yc - y1) * (xc + 1)) + ((x1 - xc) * ((2 * yc) + 1)) + (2 * xc * y1) - (2 * x1 * yc));
     cout << "D: " << d << endl;
     
-
     glBegin(GL_POINTS);//start at x0 WHERE TO END???
     glVertex2d(xc,yc);
     for (int x = 0; x <= y; x++)
@@ -563,12 +556,12 @@ void midpoint_circle()
 
         if (d > 0)
         {
-            d += (-32 * y)+(32*x)+dy + dx;
+            d += (-8 * y)+(8*x)+dy + dx;
             y--;
         }
         else
         {
-            d += (32*x)+dx;
+            d += (8*x)+dx;
         }
         
         cout << "D: " << d << endl;
