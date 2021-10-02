@@ -502,18 +502,12 @@ void midpoint_circle()
     int xc = points[0].x;
     int x1 = points[1].x;
 
-    double R = sqrt(((x1 - xc) *(x1 - xc) ) + ((y1 - yc) *(y1 - yc))); //???
+    double R = round(sqrt(((x1 - xc) *(x1 - xc) ) + ((y1 - yc) *(y1 - yc)))); //???
     cout<<"Y1: "<<y1<<endl;
     cout<<"X1: "<<x1<<endl;
-    cout<<"x1-xc: "<<(x1 - xc)<<endl;
-    cout<<"x1-xc squared: "<<((x1 - xc) ^ 2)<<endl;
     cout<<"Radius: "<<R<<endl;
     int R2 = ((x1 - xc) *(x1 - xc)) + ((y1 - yc) *(y1 - yc));
     cout<<"Radius2: "<<R2<<endl;
-    if(R < 0){
-        R = R * -1;
-    }
-    cout<<"New Radius: "<<R<<endl;
     int y = R;
     cout<<"y initial: "<<y<<endl;
     //D
