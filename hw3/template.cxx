@@ -415,10 +415,10 @@ void triangle_flat(Color color)
     double costhetaA = ((p0p1.x*p0p2.x)+(p0p1.y*p0p2.y))/magnitudes;
     double A = (magnitudes*sin(acos(costhetaA)))/2;
     double altA = ((p0p1.x*p0p2.y)-(p0p2.x*p0p1.y))/2;
-    std::cout<<"magnitudes: "<<magnitudes<<std::endl;
-    std::cout<<"costhetaA: "<<costhetaA<<std::endl;
-    std::cout<<"A: "<<A<<std::endl;
-    std::cout<<"Alt-A: "<<altA<<std::endl;
+    //std::cout<<"magnitudes: "<<magnitudes<<std::endl;
+    //std::cout<<"costhetaA: "<<costhetaA<<std::endl;
+    //std::cout<<"A: "<<A<<std::endl;
+    //std::cout<<"Alt-A: "<<altA<<std::endl;
     
     for(int r=minY;r<=maxY;r++){
         for(int c=minX;c<=maxX;c++){
@@ -429,12 +429,12 @@ void triangle_flat(Color color)
             int yp1 = points[1].y-p.y;
             int yp2 = points[2].y-p.y;
             int yp0 = points[0].y-p.y;
-            std::cout<<"xp1: "<<xp1<<std::endl;
-            std::cout<<"xp2: "<<xp2<<std::endl;
-            std::cout<<"xp0: "<<xp0<<std::endl;
-            std::cout<<"yp1: "<<yp1<<std::endl;
-            std::cout<<"yp2: "<<yp2<<std::endl;
-            std::cout<<"yp0: "<<yp0<<std::endl;
+            //std::cout<<"xp1: "<<xp1<<std::endl;
+            //std::cout<<"xp2: "<<xp2<<std::endl;
+            //std::cout<<"xp0: "<<xp0<<std::endl;
+            //std::cout<<"yp1: "<<yp1<<std::endl;
+            //std::cout<<"yp2: "<<yp2<<std::endl;
+            //std::cout<<"yp0: "<<yp0<<std::endl;
             Point pp1(xp1,yp1);
             Point pp2(xp2,yp2);
             Point pp0(xp0,yp0);
@@ -465,19 +465,19 @@ void triangle_flat(Color color)
             // std::cout<<"A0: "<<A0<<std::endl;
             // std::cout<<"A1: "<<A1<<std::endl;
             // std::cout<<"A2: "<<A2<<std::endl;
-            std::cout<<"altA0: "<<altA0<<std::endl;
-            std::cout<<"altA1: "<<altA1<<std::endl;
-            std::cout<<"altA2: "<<altA2<<std::endl;
-            double alpha = altA0/A;
-            double beta = altA1/A;
-            double gamma = altA2/A;
-            std::cout<<"alpha: "<<alpha<<std::endl;
-            std::cout<<"beta: "<<beta<<std::endl;
-            std::cout<<"gamma: "<<gamma<<std::endl;
-            if(alpha>=0 && beta>=0 && gamma>=0){
-                // if(alpha<1 && beta<1 && gamma<1){
+            //std::cout<<"altA0: "<<altA0<<std::endl;
+            //std::cout<<"altA1: "<<altA1<<std::endl;
+            //std::cout<<"altA2: "<<altA2<<std::endl;
+            double alpha = altA0/altA;
+            double beta = altA1/altA;
+            double gamma = altA2/altA;
+            //std::cout<<"alpha: "<<alpha<<std::endl;
+            //std::cout<<"beta: "<<beta<<std::endl;
+            //std::cout<<"gamma: "<<gamma<<std::endl;
+            if(alpha>=0 && beta<=0 && gamma>=0){
+                if(/*alpha<1 && beta<1 && gamma<1*/(gamma+beta<1)){
                     draw_point(p.x, p.y, color);
-                // }
+                }
             }
         }
     }
@@ -499,11 +499,59 @@ void triangle_flat(Color color)
 
 void triangle_gourand(Color c0,Color c1,Color c2)
 {
-    // not much to do.
-    // just draw 3 lines using the 3 points
-    for (int i=0; i<3; i++) {
-	int x0 = points[i].x, y0 = points[i].y;
-	int x1 = points[(i+1)%3].x, y1 = points[(i+1)%3].y;
-	draw_line(x0, y0, x1, y1, c1);
+    int maxY = std::max(std::max(points[0].y,points[1].y),points[2].y);
+    int maxX = std::max(std::max(points[0].x,points[1].x),points[2].x);
+    int minY = std::min(std::min(points[0].y,points[1].y),points[2].y);
+    int minX = std::min(std::min(points[0].x,points[1].x),points[2].x);
+    
+    int x01 = points[1].x-points[0].x;
+    int x02 = points[2].x-points[0].x;
+    int y01 = points[1].y-points[0].y;
+    int y02 = points[2].y-points[0].y;
+    
+    Point p0p1(x01,y01);
+    Point p0p2(x02,y02);
+
+    double magnitudes = sqrt((p0p1.x*p0p1.x)+(p0p1.y*p0p1.y))*sqrt((p0p2.x*p0p2.x)+(p0p2.y*p0p2.y));
+    double costhetaA = ((p0p1.x*p0p2.x)+(p0p1.y*p0p2.y))/magnitudes;
+    double A = (magnitudes*sin(acos(costhetaA)))/2;
+    double altA = ((p0p1.x*p0p2.y)-(p0p2.x*p0p1.y))/2;
+    
+    for(int r=minY;r<=maxY;r++){
+        for(int c=minX;c<=maxX;c++){
+            Point p(c,r);
+            int xp1 = points[1].x-p.x;
+            int xp2 = points[2].x-p.x;
+            int xp0 = points[0].x-p.x;
+            int yp1 = points[1].y-p.y;
+            int yp2 = points[2].y-p.y;
+            int yp0 = points[0].y-p.y;
+
+            Point pp1(xp1,yp1);
+            Point pp2(xp2,yp2);
+            Point pp0(xp0,yp0);
+
+            double altA0 = ((pp1.x*pp2.y)-(pp2.x*pp1.y))/2;
+            double altA1 = ((pp0.x*pp2.y)-(pp2.x*pp0.y))/2;
+            double altA2 = ((pp0.x*pp1.y)-(pp1.x*pp0.y))/2;
+
+            double alpha = altA0/altA;
+            double beta = altA1/altA;
+            double gamma = altA2/altA;
+            if(alpha>=0 && beta<=0 && gamma>=0){
+                if((gamma+beta<1)){
+                    Color color(c0.r*alpha,c1.g*beta*-1,c2.b*gamma);
+                    draw_point(p.x, p.y, color);
+                }
+            }
+        }
     }
+    std::cout<<"x01: "<<x01<<std::endl;
+    std::cout<<"x02: "<<x02<<std::endl;
+    std::cout<<"y01: "<<y01<<std::endl;
+    std::cout<<"y02: "<<y02<<std::endl;
+    std::cout<<"magnitudes: "<<magnitudes<<std::endl;
+    std::cout<<"costhetaA: "<<costhetaA<<std::endl;
+    std::cout<<"A: "<<A<<std::endl;
+    std::cout<<"Alt-A: "<<altA<<std::endl;
 }
