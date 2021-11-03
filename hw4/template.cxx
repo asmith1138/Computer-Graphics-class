@@ -494,13 +494,40 @@ void drawFaces()
   /* NOTE: You are only allowed to use glVertex2d   */
   /*       with GL_LINE_LOOP primitive.             */
   /**************************************************/
-
+  Matrix4 transform;
+  if(cam.perspective){
+    transform = Mult4(obj.frame,Mult4(cam.Mv,Mult4(cam.Mp,cam.Mo)));
+  }else{
+    transform = Mult4(obj.frame,Mult4(cam.Mv,Mult4(Matrix4(1.0),cam.Mo)));
+  }
+  cout<<"Draw"<<endl;
+  PrintMat(transform);
+HPoint3 h0 = Homogenize(TransHPoint3(transform,obj.vertices[0]));
+HPoint3 h1 = Homogenize(TransHPoint3(transform,obj.vertices[1]));
+HPoint3 h2 = Homogenize(TransHPoint3(transform,obj.vertices[2]));
+HPoint3 h3 = Homogenize(TransHPoint3(transform,obj.vertices[3]));
+HPoint3 h4 = Homogenize(TransHPoint3(transform,obj.vertices[4]));
+HPoint3 h5 = Homogenize(TransHPoint3(transform,obj.vertices[5]));
+HPoint3 h6 = Homogenize(TransHPoint3(transform,obj.vertices[6]));
+HPoint3 h7 = Homogenize(TransHPoint3(transform,obj.vertices[7]));
+HPoint3 h8 = Homogenize(TransHPoint3(transform,obj.vertices[8]));
+HPoint3 h9 = Homogenize(TransHPoint3(transform,obj.vertices[9]));
   glBegin(GL_LINE_LOOP);
-    glVertex2d(255.5, 306.7);
-    glVertex2d(204.3, 281.1);
-    glVertex2d(204.3, 204.3);
-    glVertex2d(306.7, 204.3);
-    glVertex2d(306.7, 281.1);
+  glVertex2d(h0.x,h0.y);
+  glVertex2d(h1.x,h1.y);
+  glVertex2d(h2.x,h2.y);
+  glVertex2d(h3.x,h3.y);
+  glVertex2d(h4.x,h4.y);
+  glVertex2d(h5.x,h5.y);
+  glVertex2d(h6.x,h6.y);
+  glVertex2d(h7.x,h7.y);
+  glVertex2d(h8.x,h8.y);
+  glVertex2d(h9.x,h9.y);
+    //glVertex2d(255.5, 306.7);
+    //glVertex2d(204.3, 281.1);
+    //glVertex2d(204.3, 204.3);
+    //glVertex2d(306.7, 204.3);
+    //glVertex2d(306.7, 281.1);
   glEnd();
 
 }
@@ -524,9 +551,9 @@ void SetViewMatrix()
   /************************************************/
 
   //cam.Mv = Matrix4(1.0);  // identity matrix
-  cam.Mv[0][0] = cam.u.x; cam.Mv[0][1] = cam.u.y; cam.Mv[0][2] = cam.u.z; cam.Mv[0][3] = (cam.u.x * -1 * cam.eye.x);
-  cam.Mv[1][0] = cam.v.x; cam.Mv[1][1] = cam.v.y; cam.Mv[1][2] = cam.v.z; cam.Mv[1][3] = (cam.u.y * -1 * cam.eye.y);
-  cam.Mv[2][0] = cam.w.x; cam.Mv[2][1] = cam.w.y; cam.Mv[2][2] = cam.w.z; cam.Mv[2][3] = (cam.u.z * -1 * cam.eye.z);
+  cam.Mv[0][0] = cam.u.x; cam.Mv[0][1] = cam.u.y; cam.Mv[0][2] = cam.u.z; cam.Mv[0][3] = (cam.u.x * -1 * cam.eye.x) + (cam.u.y * -1 * cam.eye.y) + (cam.u.z * -1 * cam.eye.z);
+  cam.Mv[1][0] = cam.v.x; cam.Mv[1][1] = cam.v.y; cam.Mv[1][2] = cam.v.z; cam.Mv[1][3] = (cam.v.x * -1 * cam.eye.x) + (cam.v.y * -1 * cam.eye.y) + (cam.v.z * -1 * cam.eye.z);
+  cam.Mv[2][0] = cam.w.x; cam.Mv[2][1] = cam.w.y; cam.Mv[2][2] = cam.w.z; cam.Mv[2][3] = (cam.w.x * -1 * cam.eye.x) + (cam.w.y * -1 * cam.eye.y) + (cam.w.z * -1 * cam.eye.z);
   cam.Mv[3][0] =       0; cam.Mv[3][1] =       0; cam.Mv[3][2] =       0; cam.Mv[3][3] = 1;
 }
 
@@ -539,13 +566,25 @@ void SetOrthoMatrix()
   /* for orthographic projection as specified in  */
   /* the lecture                                  */
   /************************************************/
-
-  Matrix4 m;
-  m[0][0] = 51.2;  m[0][1] =  0.0;  m[0][2] = 0.0;  m[0][3] = 255.5;
-  m[1][0] =  0.0;  m[1][1] = 51.2;  m[1][2] = 0.0;  m[1][3] = 255.5;
-  m[2][0] =  0.0;  m[2][1] =  0.0;  m[2][2] = 0.4;  m[2][3] = 2.4;
-  m[3][0] =  0.0;  m[3][1] =  0.0;  m[3][2] = 0.0;  m[3][3] = 1.0;
-  cam.Mo = m;
+  int nx = win_w; int ny = win_h;
+  //Matrix4 m;
+  //m[0][0] = 51.2;  m[0][1] =  0.0;  m[0][2] = 0.0;  m[0][3] = 255.5;
+  //m[1][0] =  0.0;  m[1][1] = 51.2;  m[1][2] = 0.0;  m[1][3] = 255.5;
+  //m[2][0] =  0.0;  m[2][1] =  0.0;  m[2][2] = 0.4;  m[2][3] = 2.4;
+  //m[3][0] =  0.0;  m[3][1] =  0.0;  m[3][2] = 0.0;  m[3][3] = 1.0;
+  Matrix4 mortho;
+  mortho[0][0] = 2 / (cam.r - cam.l);  mortho[0][1] =  0.0;  mortho[0][2] = 0.0;  mortho[0][3] = -1 * ((cam.l + cam.r) / (cam.r - cam.l));
+  mortho[1][0] =  0.0;  mortho[1][1] = 2 / (cam.t - cam.b);  mortho[1][2] = 0.0;  mortho[1][3] = -1 * ((cam.t + cam.b) / (cam.t - cam.b));
+  mortho[2][0] =  0.0;  mortho[2][1] =  0.0;  mortho[2][2] = 2 / (cam.f - cam.n);  mortho[2][3] = -1 * ((cam.f + cam.n) / (cam.f - cam.n));
+  mortho[3][0] =  0.0;  mortho[3][1] =  0.0;  mortho[3][2] = 0.0;  mortho[3][3] = 1.0;
+  Matrix4 mvp;
+  mvp[0][0] = nx / 2;  mvp[0][1] =  0.0;  mvp[0][2] = 0.0;  mvp[0][3] = (nx - 1) / 2;
+  mvp[1][0] =  0.0;  mvp[1][1] = ny / 2;  mvp[1][2] = 0.0;  mvp[1][3] = (ny - 1) / 2;
+  mvp[2][0] =  0.0;  mvp[2][1] =  0.0;  mvp[2][2] = 1.1;  mvp[2][3] = 0.0;
+  mvp[3][0] =  0.0;  mvp[3][1] =  0.0;  mvp[3][2] = 0.0;  mvp[3][3] = 1.0;
+  
+  
+  cam.Mo = Mult4(mvp,mortho);
 
 }
 
@@ -562,8 +601,13 @@ void SetPerspMatrix()
   /*       orthographic projection.               */
   /************************************************/
 
-  cam.Mp = Matrix4(1.0);  // identity matrix
-
+  //cam.Mp = Matrix4(1.0);  // identity matrix
+  Matrix4 persp;
+  persp[0][0] = cam.n; persp[0][1] =  0.0;  persp[0][2] = 0.0;  persp[0][3] = 0.0;
+  persp[1][0] =  0.0;  persp[1][1] = cam.n; persp[1][2] = 0.0;  persp[1][3] = 0.0;
+  persp[2][0] =  0.0;  persp[2][1] =  0.0;  persp[2][2] = cam.n+cam.f;  persp[2][3] = cam.n*cam.f*-1;
+  persp[3][0] =  0.0;  persp[3][1] =  0.0;  persp[3][2] = 1.0;  persp[3][3] = 0.0;
+  cam.Mp = persp;
 }
 
 
@@ -584,9 +628,11 @@ void DeviceToWorld(double u, double v, double& x, double& y)
   /* here to convert device coordinates      */
   /* to world coordinate                     */
   /*******************************************/
-
-  x = 0;
-  y = 0;
+  cout<<"DevToWorld"<<endl;
+  HPoint3 p(u,win_h-v,0,1);
+  HPoint3 h2 = Homogenize(TransHPoint3(obj.frame,p));
+  x = h2.x;
+  y = h2.y;
 }
 
 
@@ -658,8 +704,8 @@ void Translate_xy(double tx, double ty)
   /* for translation in xy plane according to the */
   /* specification in the handout                 */
   /************************************************/
-
-  obj.frame = Matrix4(1.0);  // identity matrix
+cout<<"TransXY"<<endl;
+  obj.frame = Mult4(SetTransMatrix(tx,ty,0),obj.frame);//Matrix4(1.0);  // identity matrix
 
 }
 
@@ -672,8 +718,8 @@ void Translate_xz(double tx, double ty)
   /* for translation in xz plane according to the */
   /* specification in the handout                 */
   /************************************************/
-
-  obj.frame = Matrix4(1.0);  // identity matrix
+cout<<"TransXZ"<<endl;
+  obj.frame = Mult4(SetTransMatrix(tx,0,ty),obj.frame);//Matrix4(1.0);  // identity matrix
 
 }
 
@@ -686,8 +732,8 @@ void Scale(double sx)
   /* for scaling in all dimensions according to   */
   /* the specification in the handout             */
   /************************************************/
-
-  obj.frame = Matrix4(1.0);  // identity matrix
+cout<<"Scale"<<endl;
+  obj.frame = Mult4(SetScaleMatrix(sx,sx,sx),obj.frame);//Matrix4(1.0);  // identity matrix
 
 }
 
@@ -701,7 +747,7 @@ void Rotate(double dx, double dy)
   /* for rolling ball rotation according to the   */
   /* specification in the handout                 */
   /************************************************/
-
+cout<<"Rotate"<<endl;
   obj.frame = Matrix4(1.0);  // identity matrix
 
 }
@@ -747,8 +793,16 @@ Matrix4 SetRotMatrix(Vector3 n, double angle)
   /* to set up the rotation matrix according to   */
   /* the specification in the handout             */
   /************************************************/
-
-  return Matrix4(1.0);
+cout<<"SetRot"<<endl;
+Matrix4 m;
+double cos1 = 1-cos(angle);
+double s = sin(angle);
+double c = cos(angle);
+m[0][0] = c+n.x*n.x*cos1;     m[0][1] = n.y*n.x*cos1-n.z*s;   m[0][2] = n.z*n.x*cos1+n.y*s;   m[0][3] = 0;
+m[1][0] = n.y*n.x*cos1+n.z*s; m[1][1] = c+n.y*n.y*cos1;       m[1][2] = n.z*n.y*cos1-n.x*s;   m[1][3] = 0;
+m[2][0] = n.z*n.x*cos1-n.y*s; m[2][1] = n.z*n.y*cos1+n.x*s;   m[2][2] = c+n.z*n.z*cos1;       m[2][3] = 0;
+m[3][0] = 0;                  m[3][1] = 0;                    m[3][2] = 0;                    m[3][3] = 1;
+  return m;
   
 }
 
