@@ -109,6 +109,7 @@ int win_h = 512;
 
 
 const double EPSILON = 0.0000001;
+const double ALPHA = 0.001;
 
 
 // for your convenience while debugging
@@ -512,22 +513,74 @@ HPoint3 h6 = Homogenize(TransHPoint3(transform,obj.vertices[6]));
 HPoint3 h7 = Homogenize(TransHPoint3(transform,obj.vertices[7]));
 HPoint3 h8 = Homogenize(TransHPoint3(transform,obj.vertices[8]));
 HPoint3 h9 = Homogenize(TransHPoint3(transform,obj.vertices[9]));
+HPoint3 h10 = Homogenize(TransHPoint3(transform,obj.vertices[10]));
   glBegin(GL_LINE_LOOP);
   glVertex2d(h0.x,h0.y);
   glVertex2d(h1.x,h1.y);
   glVertex2d(h2.x,h2.y);
   glVertex2d(h3.x,h3.y);
   glVertex2d(h4.x,h4.y);
-  glVertex2d(h5.x,h5.y);
-  glVertex2d(h6.x,h6.y);
-  glVertex2d(h7.x,h7.y);
-  glVertex2d(h8.x,h8.y);
-  glVertex2d(h9.x,h9.y);
+  //glVertex2d(h5.x,h5.y);
+  //glVertex2d(h6.x,h6.y);
+  //glVertex2d(h7.x,h7.y);
+  //glVertex2d(h8.x,h8.y);
+  //glVertex2d(h9.x,h9.y);
     //glVertex2d(255.5, 306.7);
     //glVertex2d(204.3, 281.1);
     //glVertex2d(204.3, 204.3);
     //glVertex2d(306.7, 204.3);
     //glVertex2d(306.7, 281.1);
+  glEnd();
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(h5.x,h5.y);
+  glVertex2d(h6.x,h6.y);
+  glVertex2d(h7.x,h7.y);
+  glVertex2d(h8.x,h8.y);
+  glVertex2d(h9.x,h9.y);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(h4.x,h4.y);
+  glVertex2d(h3.x,h3.y);
+  glVertex2d(h8.x,h8.y);
+  glVertex2d(h9.x,h9.y);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(h0.x,h0.y);
+  glVertex2d(h4.x,h4.y);
+  glVertex2d(h9.x,h9.y);
+  glVertex2d(h5.x,h5.y);
+  glEnd();
+  /*
+    // faces
+  {  {5,   0, 1, 2, 3, 4},
+     {5,   9, 8, 7, 6, 5},
+     {4,   4, 3, 8, 9},
+     {4,   0, 4, 9, 5},
+     {4,   1, 0, 5, 6},
+     {4,   2, 1, 6, 7},
+     {4,   3, 2, 7, 8}    }
+  
+  */
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(h1.x,h1.y);
+  glVertex2d(h0.x,h0.y);
+  glVertex2d(h5.x,h5.y);
+  glVertex2d(h6.x,h6.y);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(h2.x,h2.y);
+  glVertex2d(h1.x,h1.y);
+  glVertex2d(h6.x,h6.y);
+  glVertex2d(h7.x,h7.y);
+  glEnd();
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(h3.x,h3.y);
+  glVertex2d(h2.x,h2.y);
+  glVertex2d(h7.x,h7.y);
+  glVertex2d(h8.x,h8.y);
   glEnd();
 
 }
@@ -733,7 +786,7 @@ void Scale(double sx)
   /* the specification in the handout             */
   /************************************************/
 cout<<"Scale"<<endl;
-  obj.frame = Mult4(SetScaleMatrix(sx,sx,sx),obj.frame);//Matrix4(1.0);  // identity matrix
+  obj.frame = Mult4(SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx),obj.frame);//Matrix4(1.0);  // identity matrix
 
 }
 
@@ -748,7 +801,15 @@ void Rotate(double dx, double dy)
   /* specification in the handout                 */
   /************************************************/
 cout<<"Rotate"<<endl;
-  obj.frame = Matrix4(1.0);  // identity matrix
+double dr = sqrt(dx*dx+dy*dy);
+double nx = -1*(dy/dr);
+double ny = (dx/dr);
+double nz = 0;
+double r = 1;
+double angle = atan(dr/r);
+Vector3 n;
+n.x=nx; n.y=ny; n.z=nz;
+  obj.frame = Mult4(SetRotMatrix(n,angle),obj.frame);//Matrix4(1.0);  // identity matrix
 
 }
 
