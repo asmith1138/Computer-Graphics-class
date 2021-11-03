@@ -630,7 +630,7 @@ void DeviceToWorld(double u, double v, double& x, double& y)
   /*******************************************/
   cout<<"DevToWorld"<<endl;
   HPoint3 p(u,win_h-v,0,1);
-  HPoint3 h2 = Homogenize(TransHPoint3(obj.frame,p));
+  HPoint3 h2 = Homogenize(TransHPoint3(cam.Mv,p));
   x = h2.x;
   y = h2.y;
 }
