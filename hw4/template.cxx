@@ -434,7 +434,7 @@ void initObj()
   n.x = 0.0;  n.y = 1.0;  n.z = 0.0;
   double angle = M_PI / 6.0;
   Matrix4 m1 = SetRotMatrix(n, angle);
-  
+
   // rotate around x-axis
   n.x = 1.0;  n.y = 0.0;  n.z = 0.0;
   angle = M_PI / 6.0;
@@ -503,85 +503,87 @@ void drawFaces()
   }
   cout<<"Draw"<<endl;
   PrintMat(transform);
-HPoint3 h0 = Homogenize(TransHPoint3(transform,obj.vertices[0]));
-HPoint3 h1 = Homogenize(TransHPoint3(transform,obj.vertices[1]));
-HPoint3 h2 = Homogenize(TransHPoint3(transform,obj.vertices[2]));
-HPoint3 h3 = Homogenize(TransHPoint3(transform,obj.vertices[3]));
-HPoint3 h4 = Homogenize(TransHPoint3(transform,obj.vertices[4]));
-HPoint3 h5 = Homogenize(TransHPoint3(transform,obj.vertices[5]));
-HPoint3 h6 = Homogenize(TransHPoint3(transform,obj.vertices[6]));
-HPoint3 h7 = Homogenize(TransHPoint3(transform,obj.vertices[7]));
-HPoint3 h8 = Homogenize(TransHPoint3(transform,obj.vertices[8]));
-HPoint3 h9 = Homogenize(TransHPoint3(transform,obj.vertices[9]));
-HPoint3 h10 = Homogenize(TransHPoint3(transform,obj.vertices[10]));
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h0.x,h0.y);
-  glVertex2d(h1.x,h1.y);
-  glVertex2d(h2.x,h2.y);
-  glVertex2d(h3.x,h3.y);
-  glVertex2d(h4.x,h4.y);
+  HPoint3 hs[MAXVERTICES];
+  for(int i = 0; i < obj.Nvertices; i++){
+    hs[i] = Homogenize(TransHPoint3(transform,obj.vertices[i]));
+  }
+//HPoint3 h0 = Homogenize(TransHPoint3(transform,obj.vertices[0]));
+//HPoint3 h1 = Homogenize(TransHPoint3(transform,obj.vertices[1]));
+//HPoint3 h2 = Homogenize(TransHPoint3(transform,obj.vertices[2]));
+//HPoint3 h3 = Homogenize(TransHPoint3(transform,obj.vertices[3]));
+//HPoint3 h4 = Homogenize(TransHPoint3(transform,obj.vertices[4]));
+//HPoint3 h5 = Homogenize(TransHPoint3(transform,obj.vertices[5]));
+//HPoint3 h6 = Homogenize(TransHPoint3(transform,obj.vertices[6]));
+//HPoint3 h7 = Homogenize(TransHPoint3(transform,obj.vertices[7]));
+//HPoint3 h8 = Homogenize(TransHPoint3(transform,obj.vertices[8]));
+//HPoint3 h9 = Homogenize(TransHPoint3(transform,obj.vertices[9]));
+//HPoint3 h10 = Homogenize(TransHPoint3(transform,obj.vertices[10]));
+
+  for(int i = 0; i < obj.Nfaces; i++){
+    glBegin(GL_LINE_LOOP);
+    for(int j = 1; j <= obj.faces[i][0]; j++){
+      glVertex2d(hs[obj.faces[i][j]].x,hs[obj.faces[i][j]].y);
+    }
+    glEnd();
+  }
+  //glBegin(GL_LINE_LOOP);
+  //glVertex2d(h0.x,h0.y);
+  //glVertex2d(h1.x,h1.y);
+  //glVertex2d(h2.x,h2.y);
+  //glVertex2d(h3.x,h3.y);
+  //glVertex2d(h4.x,h4.y);
+  //glEnd();
+  //glBegin(GL_LINE_LOOP);
   //glVertex2d(h5.x,h5.y);
   //glVertex2d(h6.x,h6.y);
   //glVertex2d(h7.x,h7.y);
   //glVertex2d(h8.x,h8.y);
   //glVertex2d(h9.x,h9.y);
-    //glVertex2d(255.5, 306.7);
-    //glVertex2d(204.3, 281.1);
-    //glVertex2d(204.3, 204.3);
-    //glVertex2d(306.7, 204.3);
-    //glVertex2d(306.7, 281.1);
-  glEnd();
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h5.x,h5.y);
-  glVertex2d(h6.x,h6.y);
-  glVertex2d(h7.x,h7.y);
-  glVertex2d(h8.x,h8.y);
-  glVertex2d(h9.x,h9.y);
-  glEnd();
-
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h4.x,h4.y);
-  glVertex2d(h3.x,h3.y);
-  glVertex2d(h8.x,h8.y);
-  glVertex2d(h9.x,h9.y);
-  glEnd();
-
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h0.x,h0.y);
-  glVertex2d(h4.x,h4.y);
-  glVertex2d(h9.x,h9.y);
-  glVertex2d(h5.x,h5.y);
-  glEnd();
-  /*
-    // faces
-  {  {5,   0, 1, 2, 3, 4},
-     {5,   9, 8, 7, 6, 5},
-     {4,   4, 3, 8, 9},
-     {4,   0, 4, 9, 5},
-     {4,   1, 0, 5, 6},
-     {4,   2, 1, 6, 7},
-     {4,   3, 2, 7, 8}    }
-  
-  */
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h1.x,h1.y);
-  glVertex2d(h0.x,h0.y);
-  glVertex2d(h5.x,h5.y);
-  glVertex2d(h6.x,h6.y);
-  glEnd();
-
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h2.x,h2.y);
-  glVertex2d(h1.x,h1.y);
-  glVertex2d(h6.x,h6.y);
-  glVertex2d(h7.x,h7.y);
-  glEnd();
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(h3.x,h3.y);
-  glVertex2d(h2.x,h2.y);
-  glVertex2d(h7.x,h7.y);
-  glVertex2d(h8.x,h8.y);
-  glEnd();
+  //glEnd();
+//
+  //glBegin(GL_LINE_LOOP);
+  //glVertex2d(h4.x,h4.y);
+  //glVertex2d(h3.x,h3.y);
+  //glVertex2d(h8.x,h8.y);
+  //glVertex2d(h9.x,h9.y);
+  //glEnd();
+//
+  //glBegin(GL_LINE_LOOP);
+  //glVertex2d(h0.x,h0.y);
+  //glVertex2d(h4.x,h4.y);
+  //glVertex2d(h9.x,h9.y);
+  //glVertex2d(h5.x,h5.y);
+  //glEnd();
+  ///*
+  //  // faces
+  //{  {5,   0, 1, 2, 3, 4},
+  //   {5,   9, 8, 7, 6, 5},
+  //   {4,   4, 3, 8, 9},
+  //   {4,   0, 4, 9, 5},
+  //   {4,   1, 0, 5, 6},
+  //   {4,   2, 1, 6, 7},
+  //   {4,   3, 2, 7, 8}    }
+  //
+  //*/
+  //glBegin(GL_LINE_LOOP);
+  //glVertex2d(h1.x,h1.y);
+  //glVertex2d(h0.x,h0.y);
+  //glVertex2d(h5.x,h5.y);
+  //glVertex2d(h6.x,h6.y);
+  //glEnd();
+//
+  //glBegin(GL_LINE_LOOP);
+  //glVertex2d(h2.x,h2.y);
+  //glVertex2d(h1.x,h1.y);
+  //glVertex2d(h6.x,h6.y);
+  //glVertex2d(h7.x,h7.y);
+  //glEnd();
+  //glBegin(GL_LINE_LOOP);
+  //glVertex2d(h3.x,h3.y);
+  //glVertex2d(h2.x,h2.y);
+  //glVertex2d(h7.x,h7.y);
+  //glVertex2d(h8.x,h8.y);
+  //glEnd();
 
 }
 
@@ -786,8 +788,8 @@ void Scale(double sx)
   /* the specification in the handout             */
   /************************************************/
 cout<<"Scale"<<endl;
-  obj.frame = Mult4(SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx),obj.frame);//Matrix4(1.0);  // identity matrix
-
+  obj.frame = Mult4(SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx),obj.frame);
+  //cam.Mv = Mult4(cam.Mv,SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx));
 }
 
 
@@ -801,14 +803,16 @@ void Rotate(double dx, double dy)
   /* specification in the handout                 */
   /************************************************/
 cout<<"Rotate"<<endl;
-double dr = sqrt(dx*dx+dy*dy);
+double dr = sqrt((dx*dx)+(dy*dy));
 double nx = -1*(dy/dr);
 double ny = (dx/dr);
 double nz = 0;
-double r = 1;
-double angle = atan(dr/r);
+double r = 10;
+//double angle = (atan((dr/r)) * 180) / M_PI;
+double angle = atan((dr/r));
 Vector3 n;
 n.x=nx; n.y=ny; n.z=nz;
+cout<<"Angle:"<<angle<<endl;
   obj.frame = Mult4(SetRotMatrix(n,angle),obj.frame);//Matrix4(1.0);  // identity matrix
 
 }
@@ -855,14 +859,18 @@ Matrix4 SetRotMatrix(Vector3 n, double angle)
   /* the specification in the handout             */
   /************************************************/
 cout<<"SetRot"<<endl;
+//return Matrix4(1.0);
 Matrix4 m;
-double cos1 = 1-cos(angle);
-double s = sin(angle);
-double c = cos(angle);
+
+double cos1 = 1-cos(angle*M_PI/180);
+double s = sin(angle*M_PI/180);
+double c = cos(angle*M_PI/180);
+cout<<"1-cos:"<<cos1<<" sin:"<<s<<" cos:"<<c<<endl;
 m[0][0] = c+n.x*n.x*cos1;     m[0][1] = n.y*n.x*cos1-n.z*s;   m[0][2] = n.z*n.x*cos1+n.y*s;   m[0][3] = 0;
 m[1][0] = n.y*n.x*cos1+n.z*s; m[1][1] = c+n.y*n.y*cos1;       m[1][2] = n.z*n.y*cos1-n.x*s;   m[1][3] = 0;
 m[2][0] = n.z*n.x*cos1-n.y*s; m[2][1] = n.z*n.y*cos1+n.x*s;   m[2][2] = c+n.z*n.z*cos1;       m[2][3] = 0;
 m[3][0] = 0;                  m[3][1] = 0;                    m[3][2] = 0;                    m[3][3] = 1;
+PrintMat(m);
   return m;
   
 }
