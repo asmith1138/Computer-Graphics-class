@@ -517,7 +517,6 @@ void drawFaces()
 //HPoint3 h7 = Homogenize(TransHPoint3(transform,obj.vertices[7]));
 //HPoint3 h8 = Homogenize(TransHPoint3(transform,obj.vertices[8]));
 //HPoint3 h9 = Homogenize(TransHPoint3(transform,obj.vertices[9]));
-//HPoint3 h10 = Homogenize(TransHPoint3(transform,obj.vertices[10]));
 
   for(int i = 0; i < obj.Nfaces; i++){
     glBegin(GL_LINE_LOOP);
@@ -635,7 +634,7 @@ void SetOrthoMatrix()
   Matrix4 mvp;
   mvp[0][0] = nx / 2;  mvp[0][1] =  0.0;  mvp[0][2] = 0.0;  mvp[0][3] = (nx - 1) / 2;
   mvp[1][0] =  0.0;  mvp[1][1] = ny / 2;  mvp[1][2] = 0.0;  mvp[1][3] = (ny - 1) / 2;
-  mvp[2][0] =  0.0;  mvp[2][1] =  0.0;  mvp[2][2] = 1.1;  mvp[2][3] = 0.0;
+  mvp[2][0] =  0.0;  mvp[2][1] =  0.0;  mvp[2][2] = 1.0;  mvp[2][3] = 0.0;
   mvp[3][0] =  0.0;  mvp[3][1] =  0.0;  mvp[3][2] = 0.0;  mvp[3][3] = 1.0;
   
   
@@ -788,7 +787,9 @@ void Scale(double sx)
   /* the specification in the handout             */
   /************************************************/
 cout<<"Scale"<<endl;
-  obj.frame = Mult4(SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx),obj.frame);
+double stx = 1+(ALPHA*sx);
+  obj.frame = Mult4(SetScaleMatrix(stx,stx,stx),obj.frame);
+  //obj.frame = Mult4(SetTransMatrix(-2*stx,-2*stx,-2*stx),obj.frame);
   //cam.Mv = Mult4(cam.Mv,SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx));
 }
 
