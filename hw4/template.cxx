@@ -497,7 +497,7 @@ void drawFaces()
   /**************************************************/
   Matrix4 transform;
   if(cam.perspective){
-    transform = Mult4(obj.frame,Mult4(cam.Mv,Mult4(cam.Mp,cam.Mo)));
+  transform = Mult4(obj.frame,Mult4(cam.Mv,Mult4(cam.Mp,cam.Mo)));
   }else{
     transform = Mult4(obj.frame,Mult4(cam.Mv,Mult4(Matrix4(1.0),cam.Mo)));
   }
@@ -656,12 +656,12 @@ void SetPerspMatrix()
   /************************************************/
 
   //cam.Mp = Matrix4(1.0);  // identity matrix
-  Matrix4 persp;
-  persp[0][0] = cam.n; persp[0][1] =  0.0;  persp[0][2] = 0.0;  persp[0][3] = 0.0;
-  persp[1][0] =  0.0;  persp[1][1] = cam.n; persp[1][2] = 0.0;  persp[1][3] = 0.0;
-  persp[2][0] =  0.0;  persp[2][1] =  0.0;  persp[2][2] = cam.n+cam.f;  persp[2][3] = cam.n*cam.f*-1;
-  persp[3][0] =  0.0;  persp[3][1] =  0.0;  persp[3][2] = 1.0;  persp[3][3] = 0.0;
-  cam.Mp = persp;
+    Matrix4 persp;
+    persp[0][0] = cam.n; persp[0][1] =  0.0;  persp[0][2] = 0.0;  persp[0][3] = 0.0;
+    persp[1][0] =  0.0;  persp[1][1] = cam.n; persp[1][2] = 0.0;  persp[1][3] = 0.0;
+    persp[2][0] =  0.0;  persp[2][1] =  0.0;  persp[2][2] = cam.n+cam.f;  persp[2][3] = cam.n*cam.f*-1;
+    persp[3][0] =  0.0;  persp[3][1] =  0.0;  persp[3][2] = 1.0;  persp[3][3] = 0.0;
+    cam.Mp = persp;
 }
 
 
@@ -788,7 +788,7 @@ void Scale(double sx)
   /************************************************/
 cout<<"Scale"<<endl;
 double stx = 1+(ALPHA*sx);
-  obj.frame = Mult4(SetScaleMatrix(stx,stx,stx),obj.frame);
+  cam.Mo = Mult4(cam.Mo,SetScaleMatrix(stx,stx,stx));
   //obj.frame = Mult4(SetTransMatrix(-2*stx,-2*stx,-2*stx),obj.frame);
   //cam.Mv = Mult4(cam.Mv,SetScaleMatrix(1+ALPHA*sx,1+ALPHA*sx,1+ALPHA*sx));
 }
