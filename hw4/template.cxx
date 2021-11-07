@@ -814,7 +814,7 @@ double angle = atan((dr/r));
 Vector3 n;
 n.x=nx; n.y=ny; n.z=nz;
 cout<<"Angle:"<<angle<<endl;
-  obj.frame = Mult4(SetRotMatrix(n,angle),obj.frame);//Matrix4(1.0);  // identity matrix
+  cam.Mo = Mult4(cam.Mo, SetRotMatrix(n,angle));//Matrix4(1.0);  // identity matrix
 
 }
 
