@@ -419,7 +419,20 @@ void draw_model_wireframe()
     /*       - cnt++ (count number of triangles drawn)       */
     /*                                                       */
     /*********************************************************/
-
+    for (int i = 0; i < model.num_faces; i++)
+    {
+        std::vector<int> f = model.face(i);
+        vec3 p0 = model.vertex(f[0]);
+        vec3 p1 = model.vertex(f[1]);
+        vec3 p2 = model.vertex(f[2]);
+        if (is_visible(p0, p1, p2))
+        {
+            //convert world to screen
+            draw_line(p0.x, win_h - p0.y, p1.x, win_h - p1.y, color);
+            draw_line(p0.x, win_h - p0.y, p2.x, win_h - p2.y, color);
+            draw_line(p1.x, win_h - p1.y, p2.x, win_h - p2.y, color);
+        }
+    }
     std::cerr << "draw_model_wireframe: drawn " << cnt << " / " << model->num_faces() << " triangles\n";
 }
 
@@ -498,7 +511,13 @@ bool is_visible(const vec3& p0, const vec3& p1, const vec3& p2)
     /*     Replace the next line      */
     /*         with your code         */             
     /**********************************/
-    return true;
+    //vec3 v1 = vec3(p1.x - p0.x, p1.y - p0.y, p1.z - p0.z);
+    //vec3 v2 = vec3(p2.x - p0.x, p2.y - p0.y, p2.z - p0.z);
+    //vec3 n = glm::normalize(glm::cross(v1, v2));
+    vec3 n = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+    if (glm::dot(n, cam) > 0)
+        return true;
+    return false;
 }
 
 
@@ -519,6 +538,7 @@ bool is_inside(const int x, const int y,                         // current poin
     /*     Replace the next line      */
     /*         with your code         */             
     /**********************************/
+
     return true;
 }
 
