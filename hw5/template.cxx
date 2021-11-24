@@ -94,6 +94,7 @@ void draw_model();
 
 void draw_model_wireframe();
 void draw_model_flat_shading();
+void flat_draw_triangle(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& c);
 
 
 vec3 world2screen(vec3 v);
@@ -477,12 +478,60 @@ void draw_model_flat_shading()
     /*   so that the code is understandable and debuggable               */
     /*                                                                   */
     /*********************************************************************/
-
+    
+    //init zbuffer with -infinity
+    for (int i = 0; i < model->num_faces(); i++)
+    {
+        std::vector<int> f = model->face(i);
+        vec3 p0 = model->vertex(f[0]);
+        vec3 p1 = model->vertex(f[1]);
+        vec3 p2 = model->vertex(f[2]);
+        if (is_visible(p0, p1, p2))
+        {
+            vec3 n = glm::normalize(glm::cross(p1 - p0, p2 - p0)); //face Normal
+            if (glm::dot(n, light_dir) >= 0)
+            {
+                vec3 c = c_diffuse * c_ambient + c_diffuse * c_light * glm::dot(n, light_dir);
+                cnt++;
+                p0 = world2screen(p0);
+                p1 = world2screen(p1);
+                p2 = world2screen(p2);
+                //for each pixel in square
+                flat_draw_triangle(p0, p1, p2, c);
+            }
+        }
+    }
     std::cerr << "draw_model_flat_shading: drawn " << cnt << " / " << model->num_faces() << " triangles\n";
 }
 
 
+void flat_draw_triangle(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& c)
+{
+    int max_y = std::max(std::max(p0.y, p1.y), p2.y);
+    int max_x = std::max(std::max(p0.x, p1.x), p2.x);
+    int min_y = std::min(std::min(p0.y, p1.y), p2.y);
+    int min_x = std::min(std::min(p0.x, p1.x), p2.x);
+    float alpha, beta, gamma;
 
+    for (int y = min_y; y <= max_y; y++)
+    {
+        for (int x = min_x; x <= max_x; x++)
+        {
+            if (is_inside(x, y, p0, p1, p2, alpha, beta, gamma))
+            {
+                if (zbuffer_on)
+                {
+                    //do stuff
+                    draw_point(x, y, c);
+                }
+                else
+                {
+                    draw_point(x, y, c);
+                }
+            }
+        }
+    }
+}
 
 vec3 world2screen(vec3 v)
 {
@@ -513,7 +562,7 @@ bool is_visible(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     /**********************************/
     /*     Replace the next line      */
-    /*         with your code         */             
+    /*         with your code         */
     /**********************************/
     //vec3 v1 = vec3(p1.x - p0.x, p1.y - p0.y, p1.z - p0.z);
     //vec3 v2 = vec3(p2.x - p0.x, p2.y - p0.y, p2.z - p0.z);
@@ -523,8 +572,6 @@ bool is_visible(const vec3& p0, const vec3& p1, const vec3& p2)
         return true;
     return false;
 }
-
-
 
 // is pixel (x, y) inside the triangle p0-p1-p2?
 //   returns
@@ -542,8 +589,30 @@ bool is_inside(const int x, const int y,                         // current poin
     /*     Replace the next line      */
     /*         with your code         */             
     /**********************************/
+    vec3 p = vec3(x, y, 0);
+    //this is wrong!!
+    //float A = glm::length(glm::cross(p1 - p0, p2 - p0)) / 2;
+    //float A0 = glm::length(glm::cross(p1 - p, p2 - p)) / 2;
+    //float A1 = glm::length(glm::cross(p0 - p, p2 - p)) / 2;
+    //float A2 = glm::length(glm::cross(p0 - p, p1 - p)) / 2;
 
-    return true;
+    vec3 p0p1 = p1-p0;
+    vec3 p0p2 = p2-p0;
+    vec3 pp0 = p-p0;
+    vec3 pp1 = p-p1;
+    vec3 pp2 = p-p2;
+    float A = ((p0p1.x*p0p2.y)-(p0p2.x*p0p1.y))/2;
+    float A0 = ((pp1.x*pp2.y)-(pp2.x*pp1.y))/2;
+    float A1 = ((pp2.x*pp0.y)-(pp0.x*pp2.y))/2;
+    float A2 = ((pp0.x*pp1.y)-(pp1.x*pp0.y))/2;
+
+
+    alpha = A0 / A;
+    beta = A1 / A;
+    gamma = A2 / A;
+    if (alpha >= 0 && beta >= 0 && gamma >= 0)
+        return true;
+    return false;
 }
 
 
