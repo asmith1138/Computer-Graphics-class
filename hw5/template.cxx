@@ -419,18 +419,22 @@ void draw_model_wireframe()
     /*       - cnt++ (count number of triangles drawn)       */
     /*                                                       */
     /*********************************************************/
-    for (int i = 0; i < model.num_faces; i++)
+    for (int i = 0; i < model->num_faces(); i++)
     {
-        std::vector<int> f = model.face(i);
-        vec3 p0 = model.vertex(f[0]);
-        vec3 p1 = model.vertex(f[1]);
-        vec3 p2 = model.vertex(f[2]);
+        std::vector<int> f = model->face(i);
+        vec3 p0 = model->vertex(f[0]);
+        vec3 p1 = model->vertex(f[1]);
+        vec3 p2 = model->vertex(f[2]);
         if (is_visible(p0, p1, p2))
         {
             //convert world to screen
-            draw_line(p0.x, win_h - p0.y, p1.x, win_h - p1.y, color);
-            draw_line(p0.x, win_h - p0.y, p2.x, win_h - p2.y, color);
-            draw_line(p1.x, win_h - p1.y, p2.x, win_h - p2.y, color);
+            p0 = world2screen(p0);
+            p1 = world2screen(p1);
+            p2 = world2screen(p2);
+            draw_line(p0.x, p0.y, p1.x, p1.y, color);
+            draw_line(p0.x, p0.y, p2.x, p2.y, color);
+            draw_line(p1.x, p1.y, p2.x, p2.y, color);
+            cnt++;
         }
     }
     std::cerr << "draw_model_wireframe: drawn " << cnt << " / " << model->num_faces() << " triangles\n";
