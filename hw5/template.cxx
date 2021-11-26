@@ -2,10 +2,10 @@
  *  CMPSC 457 Section 001                                                *
  *  Homework 5                                                           *
  *                                                                       *
- *  YOUR NAME                                                            *
- *  YOUR ACCESS ID                                                       *
+ *  Andrew Smith                                                         *
+ *  azs7014                                                              *
  *                                                                       *
- *  DATE OF SUBMISSION                                                   *
+ *  12/03/2021                                                           *
  *************************************************************************/  
 
 
@@ -479,7 +479,10 @@ void draw_model_flat_shading()
     /*                                                                   */
     /*********************************************************************/
     
-    //init zbuffer with -infinity
+    for (int i = 0; i < win_w * win_h; i++)
+    {
+        zbuffer[i] = -1 * INFINITY;
+    }
     for (int i = 0; i < model->num_faces(); i++)
     {
         std::vector<int> f = model->face(i);
@@ -522,7 +525,17 @@ void flat_draw_triangle(const vec3& p0, const vec3& p1, const vec3& p2, const ve
                 if (zbuffer_on)
                 {
                     //do stuff
-                    draw_point(x, y, c);
+                    //calculate z cord for pixel
+                    //std::cout<<"ABG: "<<alpha<<", "<<beta<<", "<<gamma<<", \n";
+                    //std::cout<<"P.z s: "<<p0.z<<", "<<p1.z<<", "<<p2.z<<", \n";
+                    float z = p0.z * alpha + p1.z * beta + p2.z * gamma;
+                    //std::cout<<"z: "<<z<<", zbuffer: "<<zbuffer[y*win_h+x]<<"\n";
+                    //std::cout<<"Index: "<<y*win_h+x<<"\n";
+                    if (zbuffer[y * win_h + x] < z)
+                    {
+                        zbuffer[y * win_h + x] = z;
+                        draw_point(x, y, c);
+                    }
                 }
                 else
                 {
@@ -581,13 +594,13 @@ bool is_visible(const vec3& p0, const vec3& p1, const vec3& p2)
 //
 // can be used by draw_model_flat_shading
 //
-bool is_inside(const int x, const int y,                         // current point
-	       const vec3& p0, const vec3& p1, const vec3& p2,   // triangle vertices
-	       float& alpha, float& beta, float& gamma)          // barycentric coords for current pixel
+bool is_inside(const int x, const int y,                       // current point
+               const vec3 &p0, const vec3 &p1, const vec3 &p2, // triangle vertices
+               float &alpha, float &beta, float &gamma)        // barycentric coords for current pixel
 {
     /**********************************/
     /*     Replace the next line      */
-    /*         with your code         */             
+    /*         with your code         */
     /**********************************/
     vec3 p = vec3(x, y, 0);
     //this is wrong!!
@@ -596,16 +609,15 @@ bool is_inside(const int x, const int y,                         // current poin
     //float A1 = glm::length(glm::cross(p0 - p, p2 - p)) / 2;
     //float A2 = glm::length(glm::cross(p0 - p, p1 - p)) / 2;
 
-    vec3 p0p1 = p1-p0;
-    vec3 p0p2 = p2-p0;
-    vec3 pp0 = p-p0;
-    vec3 pp1 = p-p1;
-    vec3 pp2 = p-p2;
-    float A = ((p0p1.x*p0p2.y)-(p0p2.x*p0p1.y))/2;
-    float A0 = ((pp1.x*pp2.y)-(pp2.x*pp1.y))/2;
-    float A1 = ((pp2.x*pp0.y)-(pp0.x*pp2.y))/2;
-    float A2 = ((pp0.x*pp1.y)-(pp1.x*pp0.y))/2;
-
+    vec3 p0p1 = p1 - p0;
+    vec3 p0p2 = p2 - p0;
+    vec3 pp0 = p - p0;
+    vec3 pp1 = p - p1;
+    vec3 pp2 = p - p2;
+    float A = ((p0p1.x * p0p2.y) - (p0p2.x * p0p1.y)) / 2;
+    float A0 = ((pp1.x * pp2.y) - (pp2.x * pp1.y)) / 2;
+    float A1 = ((pp2.x * pp0.y) - (pp0.x * pp2.y)) / 2;
+    float A2 = ((pp0.x * pp1.y) - (pp1.x * pp0.y)) / 2;
 
     alpha = A0 / A;
     beta = A1 / A;
@@ -614,8 +626,6 @@ bool is_inside(const int x, const int y,                         // current poin
         return true;
     return false;
 }
-
-
 
 // for debugging purpose,
 // overload operator<< for vec3
