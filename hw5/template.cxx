@@ -5,7 +5,7 @@
  *  Andrew Smith                                                         *
  *  azs7014                                                              *
  *                                                                       *
- *  12/03/2021                                                           *
+ *  11/28/2021                                                           *
  *************************************************************************/  
 
 
@@ -577,9 +577,6 @@ bool is_visible(const vec3& p0, const vec3& p1, const vec3& p2)
     /*     Replace the next line      */
     /*         with your code         */
     /**********************************/
-    //vec3 v1 = vec3(p1.x - p0.x, p1.y - p0.y, p1.z - p0.z);
-    //vec3 v2 = vec3(p2.x - p0.x, p2.y - p0.y, p2.z - p0.z);
-    //vec3 n = glm::normalize(glm::cross(v1, v2));
     vec3 n = glm::normalize(glm::cross(p1 - p0, p2 - p0));
     if (glm::dot(n, cam) > 0)
         return true;
@@ -603,11 +600,6 @@ bool is_inside(const int x, const int y,                       // current point
     /*         with your code         */
     /**********************************/
     vec3 p = vec3(x, y, 0);
-    //this is wrong!!
-    //float A = glm::length(glm::cross(p1 - p0, p2 - p0)) / 2;
-    //float A0 = glm::length(glm::cross(p1 - p, p2 - p)) / 2;
-    //float A1 = glm::length(glm::cross(p0 - p, p2 - p)) / 2;
-    //float A2 = glm::length(glm::cross(p0 - p, p1 - p)) / 2;
 
     vec3 p0p1 = p1 - p0;
     vec3 p0p2 = p2 - p0;
