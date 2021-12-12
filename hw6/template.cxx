@@ -49,7 +49,7 @@
 #include <cfloat>
 #include <vector>
 #include <glm/glm.hpp>
-
+#define PI 3.14159265
 
 using namespace std;
 
@@ -96,10 +96,39 @@ struct Sphere
 	// - otherwise, return 0
 	//
         // Need to solve (d.d)t^2 + 2d.(o-c)t + (o-c).(o-c) - R^2 = 0
-
-	//
+    //
 	// Your code here
 	//
+    vec3 ec = ray.o - p;
+    double dd = glm::dot(ray.d , ray.d);
+    double ecd = glm::dot(ray.d,ec);
+    double ecec = glm::dot(ec,ec);
+    double dis = (ecd * ecd) - (dd * (ecec - (r * r)));
+
+    //cout << "ecd: " << ecd << " ";
+    //cout << "ec: " << ec.x << " " << ec.y << " " << ec.z << " ";
+    //cout << "ray.d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << " ";
+    //cout << "dd: " << dd << " ";
+    //cout << "ecec: " << ecec << " ";
+    //cout << "r: " << r << " ";
+    //cout << "dis: " << dis << " "<<endl;
+    
+    if(dis == 0){
+        double t = ((ecd * -1.0) / dd);
+        //cout<<"tangent: "<<t<<" ";
+        if(t > eps){
+            return t;
+        }
+    }else if(dis > 0){
+        double t1 = ((ecd * -1.0) + sqrt(dis)) / dd;
+        double t2 = ((ecd * -1.0) - sqrt(dis)) / dd;
+        //cout<<"intersect 1: "<<t1<<" 2: "<<t2<<" ";
+        double t = std::min(t1, t2);
+        if(t > eps){
+            return t;
+        }
+    }
+    return 0;
     }
 
     vec3 normal(vec3& v)
@@ -113,6 +142,7 @@ struct Sphere
 	//
 	// Your code here
 	//
+    return glm::normalize(v - p);
     }
 };
 
@@ -146,6 +176,22 @@ bool hit(const Ray& ray, double& t, int& surface_idx)
     //
     // Your code here
     //
+    bool hit = false;
+    double old=0;
+    //cout<<"spheres: "<<spheres.size()<<" ";
+    for(uint i = 0; i < spheres.size(); i++){
+        double intersect = spheres[i].intersect(ray);
+        if(intersect != 0){
+            hit = true;
+            if(old == 0 || old > intersect){
+                old = intersect;
+                surface_idx = i;
+                t = old;
+            }
+            //cout<<" hit ";
+        }
+    }
+    return hit;
 }
 
 
@@ -157,6 +203,14 @@ double lambert(int surface_idx, Ray& ray, double t)
     //
     // Your code here
     //
+    vec3 p = ray.o + (t * ray.d);
+    //cout<<"p: "<<p.x<<" "<<p.y<<" "<<p.z<<" ";
+    vec3 lhat = glm::normalize(light-p);
+    //cout<<"lhat: "<<lhat.x<<" "<<lhat.y<<" "<<lhat.z<<" ";
+    vec3 nhat = spheres[surface_idx].normal(p);
+    //cout<<"nhat: "<<nhat.x<<" "<<nhat.y<<" "<<nhat.z<<" ";
+    //cout<<"lambert: "<<std::max(0.0,glm::dot(lhat,nhat))<<endl;
+    return std::max(0.0,glm::dot(lhat,nhat));
 }
 
 
@@ -175,6 +229,7 @@ vec3 ray_color(Ray& ray)
     //       surface_idx is the index of the corresponding sphere
     bool is_hit = hit(ray, t, surface_idx);
     if (is_hit) {
+        //cout<<"sphere color: "<<spheres[surface_idx].c.x<<" "<<spheres[surface_idx].c.y<<" "<<spheres[surface_idx].c.z;
         return spheres[surface_idx].c * lambert(surface_idx, ray, t);
     }
     else {
@@ -200,6 +255,34 @@ void tracer(int nx, int ny, int d, double theta, ofstream& fout)
     //
     // Your code here
     //
+    fout << "P3" << endl << nx << " " << ny << endl << "255" << endl;
+    //cout << "P3" << endl << nx << " " << ny << endl << "255" << endl;
+    
+    int tf = 255;
+    double h = 2.0 * d * (std::tan((theta/2)*PI/180));
+    double w = (nx / ny) * h;
+    vec3 scale(w / nx, h / ny, 1.0);
+    vec3 trans(-1.0*(nx/2.0),-1.0*(ny/2.0),(-1.0*d));
+    for(int y = ny - 1; y >= 0; y--){
+        for(int x = 0; x < nx; x++){
+            vec3 pprime(x,y,0);
+            //cout<<"pprime: "<<pprime.x<<" "<<pprime.y<<" "<<pprime.z<<" ";
+            vec3 p = (pprime + trans) * scale;
+            //cout<<"p: "<<p.x<<" "<<p.y<<" "<<p.z<<" "<<endl;
+            Ray r = Ray(eye, glm::normalize(p-eye));
+            vec3 c = ray_color(r);
+            //cout<<c.x<<" "<<c.y<<" "<<c.z<<" ";
+            //cout << (tf * c.x) << " " << (tf * c.y) << " " << (tf * c.z) << " ";
+            fout << (int)(tf * c.x) << " " << (int)(tf * c.y) << " " << (int)(tf * c.z) << " ";
+        }
+        fout << endl;
+        //cout << endl;
+    }
+    //cout<<"h: "<<h<<" ";
+    //cout<<"w: "<<w<<" ";
+    //cout<<"scale: "<<scale.x<<" "<<scale.y<<" "<<scale.z<<" ";
+    //cout<<"trans: "<<trans.x<<" "<<trans.y<<" "<<trans.z<<" ";
+    //cout<<"arctan: "<<std::tan((theta / 2)*M_PI/180);
 }
 
 
@@ -231,7 +314,6 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-
 
 
 
