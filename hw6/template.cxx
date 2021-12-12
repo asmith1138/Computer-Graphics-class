@@ -2,10 +2,10 @@
  *  CMPSC 457 Section 001                                                *
  *  Homework 6                                                           *
  *                                                                       *
- *  YOUR NAME                                                            *
- *  YOUR ACCESS ID                                                       *
+ *  Andrew Smith                                                         *
+ *  azs7014                                                              *
  *                                                                       *
- *  DATE OF SUBMISSION                                                   *
+ *  12/11/2021                                                           *
  *************************************************************************/  
 
 
